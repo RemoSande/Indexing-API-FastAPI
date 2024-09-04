@@ -7,12 +7,14 @@ from pydantic import BaseModel
 import openai
 from enum import Enum
 from langchain.chains import RetrievalQA
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores.pgvector import PGVector
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
+# from langchain.vectorstores.pgvector import PGVector
+from langchain_community.vectorstores import PGVector
 from langchain.prompts import PromptTemplate
 from langchain.indexes import SQLRecordManager, index
 from langchain.schema import Document
+
 
 load_dotenv(find_dotenv())
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -30,6 +32,9 @@ logger = logging.getLogger(__name__)
 class DocumentRequest(BaseModel):
     page_content: str
     metadata: dict
+    
+class QuestionRequest(BaseModel):
+    question: str
 
 class CleanupMethod(str, Enum):
     incremental = "incremental"
@@ -95,3 +100,9 @@ async def index_documents(docs_request: list[DocumentRequest], cleanup: CleanupM
 async def ai_service(question: str) -> dict:
     result = qa.run(query=question)
     return {"result": result}
+
+# @app.post("/question")
+# async def ai_service(request: QuestionRequest) -> dict:
+#     question = request.question 
+#     result = qa.run(query=question)
+#     return {"result": result}

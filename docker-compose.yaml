@@ -1,19 +1,24 @@
-version: "3"
+# version: "3"
 services:
   postgres:
     build: ./postgres
     ports:
-      - "5433:5432"
+      - "5435:5432"
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: vectordb
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
   ai_service:
     build: ./ai_service
     ports:
-      - "8000:80"
+      - "8001:80"
     env_file:
       - .env
     depends_on:
       - postgres
+
+volumes:
+  pg_data:
